@@ -19,7 +19,7 @@ def admin_add_company():
         company_name = request.form['company_name']
         owner = request.form['owner']
         conn = get_data_connection()
-        conn.execute("INSERT INTO companies (name, owner) VALUES ('"+ company_name+"', '"+owner+"')")
+        conn.execute("INSERT INTO companies (name, owner) VALUES (?, ?)", (company_name, owner))
         conn.commit()
         conn.close()
         flash("Company created successfully.", "success")
