@@ -1,4 +1,6 @@
-from db import get_users_connection, hash_password
+#from db import get_users_connection, hash_password
+from db import get_users_connection
+from werkzeug.security import check_password_hash
 from flask import request, redirect, render_template, session, flash
 from server import app
 
@@ -11,10 +13,11 @@ def login():
         username = request.form['username']
         password = request.form['password']
         conn = get_users_connection()
-        user = conn.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, hash_password(password))).fetchone()
+        #user = conn.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, hash_password(password))).fetchone()
+        user = conn.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
         conn.close()
         
-        if user:
+        if user and check_password_hash(user['password'], password):
             session['user_id'] = user['id']
             session['username'] = user['username']
             session['role'] = user['role']
