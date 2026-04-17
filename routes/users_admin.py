@@ -1,3 +1,4 @@
+import re
 from flask import request, redirect, render_template, session, flash
 from server import app
 from db import get_users_connection, get_data_connection, hash_password
@@ -26,6 +27,13 @@ def add_user():
     password = request.form['password']
     role = request.form['role']
     company_id = request.form.get('company_id') if role == 'owner' else None
+
+    if len(password) < 8:
+        flash("Error: La contraseña es demasiado corta (mínimo 8 caracteres).")
+        return redirect('/admin/users')
+    if not re.search(r"\d", password) or not re.search(r"[a-zA-Z]", password):
+        flash("Error: La contraseña debe contener al menos una letra y un número.")
+        return redirect('/admin/users')
 
     conn = get_users_connection()
     if company_id:
