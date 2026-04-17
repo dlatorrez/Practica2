@@ -5,8 +5,10 @@ from db import get_users_connection, get_data_connection
 
 @app.route('/profile/<int:user_id>')
 def user_profile(user_id):
-    if 'username' not in session:
-        return redirect('/login')
+    #if 'username' not in session:
+        #return redirect('/login')
+    if session.get('user_id') != user_id and session.get('role') != 'admin':
+        return render_template('errors/403.html'), 403
     conn_u = get_users_connection()
     user = conn_u.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
     conn_u.close()
@@ -24,8 +26,10 @@ def user_profile(user_id):
 
 @app.route('/profile/edit', methods=['GET', 'POST'])
 def edit_profile():
-    if 'username' not in session:
-        return redirect('/login')
+    #if 'username' not in session:
+        #return redirect('/login')
+    if session.get('user_id') != user_id and session.get('role') != 'admin':
+        return render_template('errors/403.html'), 403
     conn = get_users_connection()
     user = conn.execute("SELECT * FROM users WHERE username = ?", (session['username'],)).fetchone()
 
