@@ -1,6 +1,6 @@
 from flask import request, redirect, render_template, session, flash
 from server import app
-from db import get_data_connection
+from db import get_data_connection, get_users_connection
 
 @app.route('/admin/companies')
 def admin_list_companies():
@@ -18,6 +18,15 @@ def admin_add_company():
     if request.method == 'POST':
         company_name = request.form['company_name']
         owner = request.form['owner']
+
+        conn_u = get_users_connection()
+        user = conn_u.execute("SELECT username FROM users WHERE username = ?", (owner,)).fetchone()
+        conn_u.close()
+        
+        if not user:
+            flash(f"Error: El usuario '{owner}' no existe en el sistema.", "danger")
+            return redirect('/admin/companies')
+
         conn = get_data_connection()
         conn.execute("INSERT INTO companies (name, owner) VALUES (?, ?)", (company_name, owner))
         conn.commit()

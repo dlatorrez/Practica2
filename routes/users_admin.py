@@ -29,10 +29,10 @@ def add_user():
     company_id = request.form.get('company_id') if role == 'owner' else None
 
     if len(password) < 8:
-        flash("Error: La contraseña es demasiado corta (mínimo 8 caracteres).")
+        flash("Error: La contraseña es demasiado corta (mínimo 8 caracteres).", "danger")
         return redirect('/admin/users')
     if not re.search(r"\d", password) or not re.search(r"[a-zA-Z]", password):
-        flash("Error: La contraseña debe contener al menos una letra y un número.")
+        flash("Error: La contraseña debe contener al menos una letra y un número.", "danger")
         return redirect('/admin/users')
 
     conn = get_users_connection()
